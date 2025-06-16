@@ -149,9 +149,8 @@ function onSignup() {
 </template>
 
 <style lang="scss" scoped>
-@use "sass:color";
-@use "/src/assets/Main.scss" as *;
-@use "/src/assets/Variables.scss" as *;
+
+
 
 body {
   font-family: "Arial", sans-serif;
@@ -174,13 +173,13 @@ body {
   h2 {
     font-size: 25px;
     font-weight: bold;
-    color: $main-color;
+   
     margin-bottom: 15px;
   }
 
   .subtitle {
     font-size: 14px;
-    color: $sub-color;
+ 
     margin-bottom: 20px;
   }
 
@@ -218,7 +217,7 @@ body {
 
       .btn-small {
         padding: 5px 10px;
-        background: $main-color;
+       
         color: #fff;
         border: none;
         border-radius: 5px;
@@ -226,7 +225,7 @@ body {
         cursor: pointer;
         margin-bottom: 12px !important;
         .btn-small.done {
-          background: $sub-color;
+         
         }
       }
     }
@@ -237,13 +236,13 @@ body {
       text-align: left;
 
       span {
-        color: $main-color;
+      
       }
     }
 
     .btn-main {
       padding: 5px 10px !important;
-      background: $main-color;
+    
       color: white;
       border: none;
       border-radius: 5px;
@@ -297,7 +296,7 @@ body {
       font-size: 13px;
 
       a {
-        color: $main-color;
+       
         text-decoration: none;
         font-weight: bold;
       }

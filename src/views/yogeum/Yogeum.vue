@@ -179,10 +179,7 @@ onUnmounted(() => {
 </script>
 
 <style lang="scss" scoped>
-@use "sass:color";
-@use "@/assets/Main.scss" as *;
-@use "@/assets/_Variables.scss" as *;
-@use "/src/assets/Home.scss" as *;
+
 
 // 요금 전체영역
 .yg_container {
@@ -190,7 +187,7 @@ onUnmounted(() => {
   max-width: 1100px;
   h1 {
     text-align: center;
-    font-size: $title-font-size-m;
+  
   }
 }
 .yg_container > .inner {
@@ -206,7 +203,7 @@ onUnmounted(() => {
   text-align: center;
   padding-bottom: 30px;
   .title_txt1 h1 {
-    font-family: $font-ownglyph;
+   
     font-size: 40px;
   }
 }
@@ -276,7 +273,7 @@ onUnmounted(() => {
     width: 100%;
     margin-bottom: 20px;
     .title_txt1 h1 {
-      font-family: $font-ownglyph;
+     
       font-size: 40px;
     }
   }
@@ -310,13 +307,13 @@ onUnmounted(() => {
         align-items: center;
         justify-content: center;
         border-radius: 30px;
-        border: 2px solid $sub-color;
+     
       }
       span {
         width: 150px;
         font-size: 30px;
         text-align: center;
-        color: $sub-color;
+      
       }
     }
   }
@@ -352,7 +349,7 @@ onUnmounted(() => {
   height: 70%;
   margin-bottom: 50px;
   background-color: rgba(65, 182, 232, 0.09);
-  border-radius: $radius;
+ 
 
   p {
     padding: 50px 130px !important;
@@ -412,7 +409,7 @@ onUnmounted(() => {
       transition: background 0.2s;
 
       &:hover {
-        border-bottom: 2px solid rgba($sub-color, 0.3);
+ 
         color: #555;
         font-weight: bold;
       }
@@ -420,7 +417,7 @@ onUnmounted(() => {
 
     // active-step styles
     ::v-deep .step.active .label {
-      border-bottom: 2px solid rgba($sub-color, 0.3);
+      
       color: #555;
       font-weight: bold;
     }

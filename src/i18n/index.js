@@ -179,10 +179,18 @@ const messages = {
 };
 
 const getInitialLocale = () => {
-  if (typeof window !== 'undefined') {
-    const saved = localStorage.getItem("language");
-    if (SUPPORTED_LANGUAGES.includes(saved)) return saved;
-    localStorage.setItem("language", DEFAULT_LANGUAGE);
+  try {
+    // 브라우저 환경에서만 localStorage 접근
+    if (typeof window !== "undefined" && window.localStorage) {
+      const saved = localStorage.getItem("language");
+      if (saved && SUPPORTED_LANGUAGES.includes(saved)) {
+        return saved;
+      }
+      // 저장된 언어가 없거나 지원되지 않는 언어인 경우 기본값 저장
+      localStorage.setItem("language", DEFAULT_LANGUAGE);
+    }
+  } catch (error) {
+    console.warn("localStorage 접근 실패:", error);
   }
   return DEFAULT_LANGUAGE;
 };
@@ -192,6 +200,10 @@ const i18n = createI18n({
   locale: getInitialLocale(),
   fallbackLocale: DEFAULT_LANGUAGE,
   messages,
+  silentTranslationWarn: true, // 번역 키가 없을 때 경고 숨김
+  silentFallbackWarn: true, // fallback 경고 숨김
+  missingWarn: false, // 누락된 번역 경고 비활성화
+  fallbackWarn: false, // fallback 경고 비활성화
 });
 
 export default i18n;

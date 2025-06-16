@@ -1,11 +1,14 @@
 <template>
   <div class="settings">
-    <h1>{{ t('settings.title') }}</h1>
+    <h1>{{ t("settings.title") }}</h1>
 
     <!-- 알림 설정 -->
     <section class="card">
-      <h2><i class="icon">🔔</i> {{ t('settings.notifications.title') }}</h2>
-      <div v-for="(item, key) in notificationSettings" :key="key" class="setting-row">
+      <h2><i class="icon">🔔</i> {{ t("settings.notifications.title") }}</h2>
+      <div
+        v-for="(item, key) in notificationSettings"
+        :key="key"
+        class="setting-row">
         <div>
           <strong>{{ t(item.title) }}</strong>
           <p>{{ t(item.description) }}</p>
@@ -16,19 +19,19 @@
 
     <!-- 테마 설정 -->
     <section class="card">
-      <h2><i class="icon">🎨</i> {{ t('settings.theme.title') }}</h2>
+      <h2><i class="icon">🎨</i> {{ t("settings.theme.title") }}</h2>
       <div class="setting-row">
         <div>
-          <strong>{{ t('settings.theme.darkMode.title') }}</strong>
-          <p>{{ t('settings.theme.darkMode.description') }}</p>
+          <strong>{{ t("settings.theme.darkMode.title") }}</strong>
+          <p>{{ t("settings.theme.darkMode.description") }}</p>
         </div>
         <input type="checkbox" v-model="theme.darkMode" />
       </div>
 
       <div class="setting-row">
         <div>
-          <strong>{{ t('settings.theme.colorTheme.title') }}</strong>
-          <p>{{ t('settings.theme.colorTheme.description') }}</p>
+          <strong>{{ t("settings.theme.colorTheme.title") }}</strong>
+          <p>{{ t("settings.theme.colorTheme.description") }}</p>
         </div>
         <div class="color-options">
           <span
@@ -37,26 +40,25 @@
             :style="{ backgroundColor: color }"
             :class="{ selected: theme.color === color }"
             @click="theme.color = color"
-            class="color-circle"
-          />
+            class="color-circle" />
         </div>
       </div>
     </section>
 
     <!-- 시스템 설정 -->
     <section class="card">
-      <h2><i class="icon">⚙️</i> {{ t('settings.system.title') }}</h2>
+      <h2><i class="icon">⚙️</i> {{ t("settings.system.title") }}</h2>
       <div class="setting-row">
         <div>
-          <strong>{{ t('settings.system.autoSave.title') }}</strong>
-          <p>{{ t('settings.system.autoSave.description') }}</p>
+          <strong>{{ t("settings.system.autoSave.title") }}</strong>
+          <p>{{ t("settings.system.autoSave.description") }}</p>
         </div>
         <input type="checkbox" v-model="system.autoSave" />
       </div>
       <div class="setting-row">
         <div>
-          <strong>{{ t('settings.system.language.title') }}</strong>
-          <p>{{ t('settings.system.language.description') }}</p>
+          <strong>{{ t("settings.system.language.title") }}</strong>
+          <p>{{ t("settings.system.language.description") }}</p>
         </div>
         <select v-model="selectedLang" @change="setLanguage(selectedLang)">
           <option value="ko">한국어</option>
@@ -68,69 +70,80 @@
 
     <!-- 데이터 관리 -->
     <section class="card">
-      <h2><i class="icon">💾</i> {{ t('settings.data.title') }}</h2>
+      <h2><i class="icon">💾</i> {{ t("settings.data.title") }}</h2>
       <div class="setting-row">
         <div>
-          <strong>{{ t('settings.data.backup.title') }}</strong>
-          <p>{{ t('settings.data.backup.description') }}</p>
+          <strong>{{ t("settings.data.backup.title") }}</strong>
+          <p>{{ t("settings.data.backup.description") }}</p>
         </div>
-        <button class="btn blue">{{ t('settings.data.backup.button') }}</button>
+        <button class="btn blue">{{ t("settings.data.backup.button") }}</button>
       </div>
       <div class="setting-row">
         <div>
-          <strong>{{ t('settings.data.restore.title') }}</strong>
-          <p>{{ t('settings.data.restore.description') }}</p>
+          <strong>{{ t("settings.data.restore.title") }}</strong>
+          <p>{{ t("settings.data.restore.description") }}</p>
         </div>
-        <button class="btn green">{{ t('settings.data.restore.button') }}</button>
+        <button class="btn green">
+          {{ t("settings.data.restore.button") }}
+        </button>
       </div>
     </section>
 
     <!-- 저장 버튼 -->
     <div class="save-button">
-      <button class="btn blue">{{ t('settings.saveButton') }}</button>
+      <button class="btn blue">{{ t("settings.saveButton") }}</button>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { useI18n } from 'vue-i18n';
+import { ref } from "vue";
+import { useI18n } from "vue-i18n";
 
 const { t, locale } = useI18n();
 
 const selectedLang = ref(locale.value);
 
 const setLanguage = (lang) => {
-  locale.value = lang;
-  localStorage.setItem('language', lang);
-  selectedLang.value = lang;
+  try {
+    locale.value = lang;
+    if (typeof window !== "undefined" && window.localStorage) {
+      localStorage.setItem("language", lang);
+    }
+    selectedLang.value = lang;
+  } catch (error) {
+    console.warn("언어 설정 중 오류:", error);
+    // 오류가 발생해도 locale은 변경
+    locale.value = lang;
+    selectedLang.value = lang;
+  }
 };
 
 // 상태
 const notificationSettings = {
   email: {
-    title: 'settings.notifications.email.title',
-    description: 'settings.notifications.email.description',
+    title: "settings.notifications.email.title",
+    description: "settings.notifications.email.description",
     enabled: ref(true),
   },
   push: {
-    title: 'settings.notifications.push.title',
-    description: 'settings.notifications.push.description',
+    title: "settings.notifications.push.title",
+    description: "settings.notifications.push.description",
     enabled: ref(true),
   },
   cancel: {
-    title: 'settings.notifications.cancel.title',
-    description: 'settings.notifications.cancel.description',
+    title: "settings.notifications.cancel.title",
+    description: "settings.notifications.cancel.description",
     enabled: ref(true),
   },
 };
 
 const theme = ref({
   darkMode: true,
-  color: '#3498db',
+  color: "#3498db",
 });
 
-const colorOptions = ['#3498db', '#2ecc71', '#e74c3c', '#f1c40f', '#9b59b6'];
+const colorOptions = ["#3498db", "#2ecc71", "#e74c3c", "#f1c40f", "#9b59b6"];
 
 const system = ref({
   autoSave: true,
