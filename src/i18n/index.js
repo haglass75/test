@@ -1,7 +1,7 @@
 // src/i18n/index.js
 import { createI18n } from "vue-i18n";
 
-const DEFAULT_LANGUAGE = "ko";
+// 지원 언어 목록
 export const SUPPORTED_LANGUAGES = ["ko", "en", "ja"];
 
 // 번역 메시지를 별도 객체로 정의
@@ -179,90 +179,29 @@ const messages = {
   },
 };
 
-// 강화된 초기 언어 설정
-const getInitialLocale = () => {
-  let initialLocale = DEFAULT_LANGUAGE;
+// 초기 언어 설정
+const getInitialLanguage = () => {
+  if (typeof window === "undefined") return "ko";
 
   try {
-    // 브라우저 환경에서만 실행
-    if (typeof window !== "undefined") {
-      console.log("i18n 초기화 시작");
-
-      // 1. localStorage에서 저장된 언어 확인
-      if (window.localStorage) {
-        const saved = localStorage.getItem("language");
-        console.log("localStorage에서 읽은 언어:", saved);
-
-        if (saved && SUPPORTED_LANGUAGES.includes(saved)) {
-          initialLocale = saved;
-          console.log("저장된 언어 사용:", initialLocale);
-        } else {
-          // 저장된 언어가 없거나 지원되지 않는 언어인 경우
-          localStorage.setItem("language", DEFAULT_LANGUAGE);
-          console.log("기본 언어로 설정:", DEFAULT_LANGUAGE);
-        }
-      }
-
-      // 2. 브라우저 언어 감지 (선택적)
-      if (initialLocale === DEFAULT_LANGUAGE && window.navigator) {
-        const browserLang = window.navigator.language.split("-")[0];
-        console.log("브라우저 언어:", browserLang);
-
-        if (SUPPORTED_LANGUAGES.includes(browserLang)) {
-          initialLocale = browserLang;
-          console.log("브라우저 언어로 설정:", initialLocale);
-        }
-      }
+    const saved = localStorage.getItem("language");
+    if (saved && SUPPORTED_LANGUAGES.includes(saved)) {
+      return saved;
     }
   } catch (error) {
-    console.warn("i18n 초기화 중 오류:", error);
-    initialLocale = DEFAULT_LANGUAGE;
+    console.warn("localStorage 접근 실패:", error);
   }
 
-  console.log("최종 초기 언어:", initialLocale);
-  return initialLocale;
+  return "ko";
 };
 
 // i18n 인스턴스 생성
 const i18n = createI18n({
   legacy: false,
-  locale: getInitialLocale(),
-  fallbackLocale: DEFAULT_LANGUAGE,
+  locale: getInitialLanguage(),
+  fallbackLocale: "ko",
   messages,
-  silentTranslationWarn: false, // 번역 키가 없을 때 경고 표시
-  silentFallbackWarn: false, // fallback 경고 표시
-  missingWarn: true, // 누락된 번역 경고 활성화
-  fallbackWarn: true, // fallback 경고 활성화
   globalInjection: true,
-  allowComposition: true,
-  useScope: "global",
 });
-
-// 초기화 완료 로그
-console.log("i18n 인스턴스 생성 완료, 현재 언어:", i18n.global.locale.value);
-console.log("사용 가능한 메시지:", Object.keys(i18n.global.messages.value));
-
-// 언어 변경 함수 추가
-export const changeLanguage = (lang) => {
-  if (SUPPORTED_LANGUAGES.includes(lang)) {
-    console.log("changeLanguage 함수 호출:", lang);
-    i18n.global.locale.value = lang;
-
-    if (typeof window !== "undefined" && window.localStorage) {
-      localStorage.setItem("language", lang);
-    }
-
-    // 강제 업데이트를 위한 이벤트 발생
-    if (typeof window !== "undefined") {
-      window.dispatchEvent(
-        new CustomEvent("i18n:locale-changed", {
-          detail: { locale: lang },
-        })
-      );
-    }
-
-    console.log("changeLanguage 완료:", lang);
-  }
-};
 
 export default i18n;
