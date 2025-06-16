@@ -180,36 +180,10 @@ const messages = {
 
 // Vercel 환경에 최적화된 초기 언어 설정
 const getInitialLanguage = () => {
-  // SSR 환경에서는 기본값 반환
-  if (typeof window === "undefined") {
-    return "ko";
-  }
-
-  try {
-    // 1. 환경 변수에서 확인
-    const envLocale = import.meta.env.VITE_I18N_LOCALE;
-    if (envLocale && SUPPORTED_LANGUAGES.includes(envLocale)) {
-      return envLocale;
-    }
-
-    // 2. localStorage에서 확인
-    const saved = localStorage.getItem("language");
-    if (saved && SUPPORTED_LANGUAGES.includes(saved)) {
-      return saved;
-    }
-
-    // 3. 브라우저 언어 확인
-    if (navigator && navigator.language) {
-      const browserLang = navigator.language.split("-")[0];
-      if (SUPPORTED_LANGUAGES.includes(browserLang)) {
-        return browserLang;
-      }
-    }
-  } catch (error) {
-    console.warn("언어 설정 중 오류:", error);
-  }
-
-  // 기본값
+  // localStorage 완전 제거, 브라우저 언어 우선, 없으면 ko
+  if (typeof window === "undefined") return "ko";
+  const browserLang = navigator.language?.split("-")[0];
+  if (SUPPORTED_LANGUAGES.includes(browserLang)) return browserLang;
   return "ko";
 };
 
@@ -233,11 +207,6 @@ export const forceChangeLanguage = (lang) => {
 
     // i18n locale 변경
     i18n.global.locale.value = lang;
-
-    // localStorage 저장
-    if (typeof window !== "undefined") {
-      localStorage.setItem("language", lang);
-    }
 
     // 강제 리렌더링을 위한 이벤트 발생
     if (typeof window !== "undefined") {
