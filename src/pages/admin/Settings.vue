@@ -97,22 +97,43 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
 
 const { t, locale } = useI18n();
 
 const selectedLang = ref(locale.value);
 
-const setLanguage = (lang) => {
+const setLanguage = async (lang) => {
   try {
+    console.log("언어 변경 시도:", lang);
+
+    // i18n locale 변경
     locale.value = lang;
+
+    // localStorage 저장
     if (typeof window !== "undefined" && window.localStorage) {
       localStorage.setItem("language", lang);
     }
+
+    // selectedLang 업데이트
     selectedLang.value = lang;
+
+    // DOM 업데이트 대기
+    await nextTick();
+
+    // 강제 리렌더링을 위한 추가 처리
+    if (typeof window !== "undefined") {
+      // 브라우저 환경에서만 실행
+      const event = new CustomEvent("languageChanged", {
+        detail: { language: lang },
+      });
+      window.dispatchEvent(event);
+    }
+
+    console.log("언어 변경 완료:", lang);
   } catch (error) {
-    console.warn("언어 설정 중 오류:", error);
+    console.error("언어 설정 중 오류:", error);
     // 오류가 발생해도 locale은 변경
     locale.value = lang;
     selectedLang.value = lang;
