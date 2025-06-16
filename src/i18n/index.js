@@ -1,10 +1,9 @@
-// src/i18n/index.js
 import { createI18n } from "vue-i18n";
 
 // 지원 언어 목록
 export const SUPPORTED_LANGUAGES = ["ko", "en", "ja"];
 
-// 번역 메시지를 별도 객체로 정의
+// 번역 메시지
 const messages = {
   ko: {
     settings: {

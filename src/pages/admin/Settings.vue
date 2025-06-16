@@ -99,9 +99,12 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
-import { SUPPORTED_LANGUAGES } from "../i18n/index.js";
+import { SUPPORTED_LANGUAGES } from "../../i18n/index.js";
+import { changeLanguage } from "../../i18n/index.js";
 
 const { t, locale } = useI18n();
+console.log(t);
+console.log(locale);
 const selectedLang = ref(locale.value);
 
 // 컴포넌트 마운트 시 현재 언어 설정
