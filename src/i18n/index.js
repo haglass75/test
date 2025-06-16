@@ -235,10 +235,34 @@ const i18n = createI18n({
   fallbackWarn: true, // fallback 경고 활성화
   globalInjection: true,
   allowComposition: true,
+  useScope: "global",
 });
 
 // 초기화 완료 로그
 console.log("i18n 인스턴스 생성 완료, 현재 언어:", i18n.global.locale.value);
 console.log("사용 가능한 메시지:", Object.keys(i18n.global.messages.value));
+
+// 언어 변경 함수 추가
+export const changeLanguage = (lang) => {
+  if (SUPPORTED_LANGUAGES.includes(lang)) {
+    console.log("changeLanguage 함수 호출:", lang);
+    i18n.global.locale.value = lang;
+
+    if (typeof window !== "undefined" && window.localStorage) {
+      localStorage.setItem("language", lang);
+    }
+
+    // 강제 업데이트를 위한 이벤트 발생
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(
+        new CustomEvent("i18n:locale-changed", {
+          detail: { locale: lang },
+        })
+      );
+    }
+
+    console.log("changeLanguage 완료:", lang);
+  }
+};
 
 export default i18n;

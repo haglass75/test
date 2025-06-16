@@ -1,5 +1,5 @@
 <template>
-  <div class="settings">
+  <div class="settings" :key="forceUpdate">
     <h1>{{ t("settings.title") || "설정" }}</h1>
 
     <!-- 디버깅 정보 -->
@@ -15,6 +15,7 @@
       <p style="color: #fff; margin: 0">
         테스트 번역: {{ t("settings.title") }}
       </p>
+      <p style="color: #fff; margin: 0">강제 업데이트 키: {{ forceUpdate }}</p>
     </div>
 
     <!-- 알림 설정 -->
@@ -119,7 +120,7 @@
     <!-- 데이터 관리 -->
     <section class="card">
       <h2>
-        <i class="icon">💾</i> {{ t("settings.data.title") || "데이터 관리" }}
+        <i class="icon">��</i> {{ t("settings.data.title") || "데이터 관리" }}
       </h2>
       <div class="setting-row">
         <div>
@@ -165,50 +166,71 @@
 </template>
 
 <script setup>
-import { ref, nextTick, onMounted } from "vue";
+import { ref, nextTick, onMounted, watch, onUnmounted } from "vue";
 import { useI18n } from "vue-i18n";
+import { changeLanguage } from "../i18n/index.js";
 
 const { t, locale } = useI18n();
 
 const selectedLang = ref(locale.value);
+const forceUpdate = ref(0); // 강제 리렌더링을 위한 키
+
+// i18n 이벤트 리스너
+const handleLocaleChange = (event) => {
+  console.log("i18n 이벤트 리스너 실행:", event.detail);
+  forceUpdate.value++;
+};
 
 // 컴포넌트 마운트 시 현재 언어 설정
 onMounted(() => {
   console.log("Settings 컴포넌트 마운트, 현재 언어:", locale.value);
   selectedLang.value = locale.value;
+
+  // i18n 이벤트 리스너 등록
+  if (typeof window !== "undefined") {
+    window.addEventListener("i18n:locale-changed", handleLocaleChange);
+  }
 });
+
+// 컴포넌트 언마운트 시 이벤트 리스너 제거
+onUnmounted(() => {
+  if (typeof window !== "undefined") {
+    window.removeEventListener("i18n:locale-changed", handleLocaleChange);
+  }
+});
+
+// locale 변경 감지
+watch(
+  () => locale.value,
+  (newLang) => {
+    console.log("locale 변경 감지:", newLang);
+    selectedLang.value = newLang;
+    forceUpdate.value++; // 강제 리렌더링
+  }
+);
 
 const setLanguage = async (lang) => {
   try {
     console.log("언어 변경 시도:", lang);
     console.log("변경 전 locale.value:", locale.value);
 
-    // i18n locale 변경
-    locale.value = lang;
-
-    // localStorage 저장
-    if (typeof window !== "undefined" && window.localStorage) {
-      localStorage.setItem("language", lang);
-      console.log("localStorage에 저장됨:", lang);
-    }
+    // 새로운 changeLanguage 함수 사용
+    changeLanguage(lang);
 
     // selectedLang 업데이트
     selectedLang.value = lang;
 
+    // 강제 리렌더링
+    forceUpdate.value++;
+
     // DOM 업데이트 대기
     await nextTick();
 
-    // 강제 리렌더링을 위한 추가 처리
-    if (typeof window !== "undefined") {
-      // 브라우저 환경에서만 실행
-      const event = new CustomEvent("languageChanged", {
-        detail: { language: lang },
-      });
-      window.dispatchEvent(event);
-
-      // 페이지 리로드 없이 강제 업데이트
-      document.dispatchEvent(new Event("DOMContentLoaded"));
-    }
+    // 추가 강제 업데이트
+    setTimeout(() => {
+      forceUpdate.value++;
+      console.log("강제 업데이트 실행");
+    }, 100);
 
     console.log("변경 후 locale.value:", locale.value);
     console.log("언어 변경 완료:", lang);
@@ -223,6 +245,7 @@ const setLanguage = async (lang) => {
     // 오류가 발생해도 locale은 변경
     locale.value = lang;
     selectedLang.value = lang;
+    forceUpdate.value++;
   }
 };
 
