@@ -226,4 +226,33 @@ const i18n = createI18n({
   fallbackWarn: false,
 });
 
+// 강제 언어 변경 함수
+export const forceChangeLanguage = (lang) => {
+  if (SUPPORTED_LANGUAGES.includes(lang)) {
+    console.log("강제 언어 변경:", lang);
+
+    // i18n locale 변경
+    i18n.global.locale.value = lang;
+
+    // localStorage 저장
+    if (typeof window !== "undefined") {
+      localStorage.setItem("language", lang);
+    }
+
+    // 강제 리렌더링을 위한 이벤트 발생
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(
+        new CustomEvent("language-changed", {
+          detail: { language: lang },
+        })
+      );
+
+      // 페이지 리로드 없이 강제 업데이트
+      document.dispatchEvent(new Event("DOMContentLoaded"));
+    }
+
+    console.log("강제 언어 변경 완료:", lang);
+  }
+};
+
 export default i18n;

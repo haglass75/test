@@ -1,6 +1,19 @@
 <template>
-  <div class="settings">
+  <div class="settings" :key="forceUpdate">
     <h1>{{ t("settings.title") }}</h1>
+
+    <!-- 디버깅 정보 -->
+    <div
+      style="
+        background: #333;
+        padding: 10px;
+        margin-bottom: 20px;
+        border-radius: 5px;
+      ">
+      <p style="color: #fff; margin: 0">현재 언어: {{ locale }}</p>
+      <p style="color: #fff; margin: 0">선택된 언어: {{ selectedLang }}</p>
+      <p style="color: #fff; margin: 0">강제 업데이트 키: {{ forceUpdate }}</p>
+    </div>
 
     <!-- 알림 설정 -->
     <section class="card">
@@ -97,26 +110,50 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import { useI18n } from "vue-i18n";
-import { SUPPORTED_LANGUAGES } from "../../i18n/index.js";
-import { changeLanguage } from "../../i18n/changeLanguage.js";
+import { SUPPORTED_LANGUAGES, forceChangeLanguage } from "../../i18n/index.js";
 
 const { t, locale } = useI18n();
-console.log(t);
-console.log(locale);
 const selectedLang = ref(locale.value);
+const forceUpdate = ref(0); // 강제 리렌더링을 위한 키
+
+// 언어 변경 이벤트 리스너
+const handleLanguageChange = (event) => {
+  console.log("언어 변경 이벤트 수신:", event.detail);
+  forceUpdate.value++;
+};
 
 // 컴포넌트 마운트 시 현재 언어 설정
 onMounted(() => {
   selectedLang.value = locale.value;
+
+  // 언어 변경 이벤트 리스너 등록
+  if (typeof window !== "undefined") {
+    window.addEventListener("language-changed", handleLanguageChange);
+  }
+});
+
+// 컴포넌트 언마운트 시 이벤트 리스너 제거
+onUnmounted(() => {
+  if (typeof window !== "undefined") {
+    window.removeEventListener("language-changed", handleLanguageChange);
+  }
 });
 
 // 언어 변경 함수
 const setLanguage = (lang) => {
   if (SUPPORTED_LANGUAGES.includes(lang)) {
-    changeLanguage(lang);
+    console.log("언어 변경 시도:", lang);
+
+    // 강제 언어 변경 함수 사용
+    forceChangeLanguage(lang);
     selectedLang.value = lang;
+
+    // 강제 리렌더링
+    forceUpdate.value++;
+
+    console.log("언어 변경 완료:", lang);
   }
 };
 
