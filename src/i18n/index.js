@@ -178,25 +178,47 @@ const messages = {
   },
 };
 
-// 안전한 초기 언어 설정
+// 강화된 초기 언어 설정
 const getInitialLocale = () => {
   let initialLocale = DEFAULT_LANGUAGE;
 
   try {
-    // 브라우저 환경에서만 localStorage 접근
-    if (typeof window !== "undefined" && window.localStorage) {
-      const saved = localStorage.getItem("language");
-      if (saved && SUPPORTED_LANGUAGES.includes(saved)) {
-        initialLocale = saved;
-      } else {
-        // 저장된 언어가 없거나 지원되지 않는 언어인 경우 기본값 저장
-        localStorage.setItem("language", DEFAULT_LANGUAGE);
+    // 브라우저 환경에서만 실행
+    if (typeof window !== "undefined") {
+      console.log("i18n 초기화 시작");
+
+      // 1. localStorage에서 저장된 언어 확인
+      if (window.localStorage) {
+        const saved = localStorage.getItem("language");
+        console.log("localStorage에서 읽은 언어:", saved);
+
+        if (saved && SUPPORTED_LANGUAGES.includes(saved)) {
+          initialLocale = saved;
+          console.log("저장된 언어 사용:", initialLocale);
+        } else {
+          // 저장된 언어가 없거나 지원되지 않는 언어인 경우
+          localStorage.setItem("language", DEFAULT_LANGUAGE);
+          console.log("기본 언어로 설정:", DEFAULT_LANGUAGE);
+        }
+      }
+
+      // 2. 브라우저 언어 감지 (선택적)
+      if (initialLocale === DEFAULT_LANGUAGE && window.navigator) {
+        const browserLang = window.navigator.language.split("-")[0];
+        console.log("브라우저 언어:", browserLang);
+
+        if (SUPPORTED_LANGUAGES.includes(browserLang)) {
+          initialLocale = browserLang;
+          console.log("브라우저 언어로 설정:", initialLocale);
+        }
       }
     }
   } catch (error) {
-    console.warn("localStorage 접근 실패:", error);
+    console.warn("i18n 초기화 중 오류:", error);
+    initialLocale = DEFAULT_LANGUAGE;
   }
 
+  console.log("최종 초기 언어:", initialLocale);
   return initialLocale;
 };
 
@@ -212,5 +234,8 @@ const i18n = createI18n({
   fallbackWarn: false,
   globalInjection: true,
 });
+
+// 초기화 완료 로그
+console.log("i18n 인스턴스 생성 완료, 현재 언어:", i18n.global.locale.value);
 
 export default i18n;

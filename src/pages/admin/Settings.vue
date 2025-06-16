@@ -97,16 +97,23 @@
 </template>
 
 <script setup>
-import { ref, nextTick } from "vue";
+import { ref, nextTick, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 
 const { t, locale } = useI18n();
 
 const selectedLang = ref(locale.value);
 
+// 컴포넌트 마운트 시 현재 언어 설정
+onMounted(() => {
+  console.log("Settings 컴포넌트 마운트, 현재 언어:", locale.value);
+  selectedLang.value = locale.value;
+});
+
 const setLanguage = async (lang) => {
   try {
     console.log("언어 변경 시도:", lang);
+    console.log("변경 전 locale.value:", locale.value);
 
     // i18n locale 변경
     locale.value = lang;
@@ -114,6 +121,7 @@ const setLanguage = async (lang) => {
     // localStorage 저장
     if (typeof window !== "undefined" && window.localStorage) {
       localStorage.setItem("language", lang);
+      console.log("localStorage에 저장됨:", lang);
     }
 
     // selectedLang 업데이트
@@ -129,9 +137,19 @@ const setLanguage = async (lang) => {
         detail: { language: lang },
       });
       window.dispatchEvent(event);
+
+      // 페이지 리로드 없이 강제 업데이트
+      document.dispatchEvent(new Event("DOMContentLoaded"));
     }
 
+    console.log("변경 후 locale.value:", locale.value);
     console.log("언어 변경 완료:", lang);
+
+    // 추가 확인
+    setTimeout(() => {
+      console.log("1초 후 locale.value 확인:", locale.value);
+      console.log("1초 후 selectedLang.value 확인:", selectedLang.value);
+    }, 1000);
   } catch (error) {
     console.error("언어 설정 중 오류:", error);
     // 오류가 발생해도 locale은 변경
