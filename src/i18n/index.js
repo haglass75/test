@@ -4,6 +4,7 @@ import { createI18n } from "vue-i18n";
 const DEFAULT_LANGUAGE = "ko";
 export const SUPPORTED_LANGUAGES = ["ko", "en", "ja"];
 
+// 번역 메시지를 별도 객체로 정의
 const messages = {
   ko: {
     settings: {
@@ -228,14 +229,16 @@ const i18n = createI18n({
   locale: getInitialLocale(),
   fallbackLocale: DEFAULT_LANGUAGE,
   messages,
-  silentTranslationWarn: true,
-  silentFallbackWarn: true,
-  missingWarn: false,
-  fallbackWarn: false,
+  silentTranslationWarn: false, // 번역 키가 없을 때 경고 표시
+  silentFallbackWarn: false, // fallback 경고 표시
+  missingWarn: true, // 누락된 번역 경고 활성화
+  fallbackWarn: true, // fallback 경고 활성화
   globalInjection: true,
+  allowComposition: true,
 });
 
 // 초기화 완료 로그
 console.log("i18n 인스턴스 생성 완료, 현재 언어:", i18n.global.locale.value);
+console.log("사용 가능한 메시지:", Object.keys(i18n.global.messages.value));
 
 export default i18n;

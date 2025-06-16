@@ -1,17 +1,35 @@
 <template>
   <div class="settings">
-    <h1>{{ t("settings.title") }}</h1>
+    <h1>{{ t("settings.title") || "설정" }}</h1>
+
+    <!-- 디버깅 정보 -->
+    <div
+      style="
+        background: #333;
+        padding: 10px;
+        margin-bottom: 20px;
+        border-radius: 5px;
+      ">
+      <p style="color: #fff; margin: 0">현재 언어: {{ locale }}</p>
+      <p style="color: #fff; margin: 0">선택된 언어: {{ selectedLang }}</p>
+      <p style="color: #fff; margin: 0">
+        테스트 번역: {{ t("settings.title") }}
+      </p>
+    </div>
 
     <!-- 알림 설정 -->
     <section class="card">
-      <h2><i class="icon">🔔</i> {{ t("settings.notifications.title") }}</h2>
+      <h2>
+        <i class="icon">🔔</i>
+        {{ t("settings.notifications.title") || "알림 설정" }}
+      </h2>
       <div
         v-for="(item, key) in notificationSettings"
         :key="key"
         class="setting-row">
         <div>
-          <strong>{{ t(item.title) }}</strong>
-          <p>{{ t(item.description) }}</p>
+          <strong>{{ t(item.title) || item.title }}</strong>
+          <p>{{ t(item.description) || item.description }}</p>
         </div>
         <input type="checkbox" v-model="item.enabled" />
       </div>
@@ -19,19 +37,35 @@
 
     <!-- 테마 설정 -->
     <section class="card">
-      <h2><i class="icon">🎨</i> {{ t("settings.theme.title") }}</h2>
+      <h2>
+        <i class="icon">🎨</i> {{ t("settings.theme.title") || "테마 설정" }}
+      </h2>
       <div class="setting-row">
         <div>
-          <strong>{{ t("settings.theme.darkMode.title") }}</strong>
-          <p>{{ t("settings.theme.darkMode.description") }}</p>
+          <strong>{{
+            t("settings.theme.darkMode.title") || "다크 모드"
+          }}</strong>
+          <p>
+            {{
+              t("settings.theme.darkMode.description") ||
+              "어두운 테마로 전환합니다."
+            }}
+          </p>
         </div>
         <input type="checkbox" v-model="theme.darkMode" />
       </div>
 
       <div class="setting-row">
         <div>
-          <strong>{{ t("settings.theme.colorTheme.title") }}</strong>
-          <p>{{ t("settings.theme.colorTheme.description") }}</p>
+          <strong>{{
+            t("settings.theme.colorTheme.title") || "색상 테마"
+          }}</strong>
+          <p>
+            {{
+              t("settings.theme.colorTheme.description") ||
+              "인터페이스의 주요 색상을 선택합니다."
+            }}
+          </p>
         </div>
         <div class="color-options">
           <span
@@ -47,18 +81,32 @@
 
     <!-- 시스템 설정 -->
     <section class="card">
-      <h2><i class="icon">⚙️</i> {{ t("settings.system.title") }}</h2>
+      <h2>
+        <i class="icon">⚙️</i> {{ t("settings.system.title") || "시스템 설정" }}
+      </h2>
       <div class="setting-row">
         <div>
-          <strong>{{ t("settings.system.autoSave.title") }}</strong>
-          <p>{{ t("settings.system.autoSave.description") }}</p>
+          <strong>{{
+            t("settings.system.autoSave.title") || "자동 저장"
+          }}</strong>
+          <p>
+            {{
+              t("settings.system.autoSave.description") ||
+              "변경사항을 자동으로 저장합니다."
+            }}
+          </p>
         </div>
         <input type="checkbox" v-model="system.autoSave" />
       </div>
       <div class="setting-row">
         <div>
-          <strong>{{ t("settings.system.language.title") }}</strong>
-          <p>{{ t("settings.system.language.description") }}</p>
+          <strong>{{ t("settings.system.language.title") || "언어" }}</strong>
+          <p>
+            {{
+              t("settings.system.language.description") ||
+              "인터페이스 언어를 선택합니다."
+            }}
+          </p>
         </div>
         <select v-model="selectedLang" @change="setLanguage(selectedLang)">
           <option value="ko">한국어</option>
@@ -70,28 +118,48 @@
 
     <!-- 데이터 관리 -->
     <section class="card">
-      <h2><i class="icon">💾</i> {{ t("settings.data.title") }}</h2>
+      <h2>
+        <i class="icon">💾</i> {{ t("settings.data.title") || "데이터 관리" }}
+      </h2>
       <div class="setting-row">
         <div>
-          <strong>{{ t("settings.data.backup.title") }}</strong>
-          <p>{{ t("settings.data.backup.description") }}</p>
+          <strong>{{
+            t("settings.data.backup.title") || "데이터 백업"
+          }}</strong>
+          <p>
+            {{
+              t("settings.data.backup.description") ||
+              "모든 데이터를 백업합니다."
+            }}
+          </p>
         </div>
-        <button class="btn blue">{{ t("settings.data.backup.button") }}</button>
+        <button class="btn blue">
+          {{ t("settings.data.backup.button") || "백업하기" }}
+        </button>
       </div>
       <div class="setting-row">
         <div>
-          <strong>{{ t("settings.data.restore.title") }}</strong>
-          <p>{{ t("settings.data.restore.description") }}</p>
+          <strong>{{
+            t("settings.data.restore.title") || "데이터 복원"
+          }}</strong>
+          <p>
+            {{
+              t("settings.data.restore.description") ||
+              "백업된 데이터를 복원합니다."
+            }}
+          </p>
         </div>
         <button class="btn green">
-          {{ t("settings.data.restore.button") }}
+          {{ t("settings.data.restore.button") || "복원하기" }}
         </button>
       </div>
     </section>
 
     <!-- 저장 버튼 -->
     <div class="save-button">
-      <button class="btn blue">{{ t("settings.saveButton") }}</button>
+      <button class="btn blue">
+        {{ t("settings.saveButton") || "설정 저장" }}
+      </button>
     </div>
   </div>
 </template>
