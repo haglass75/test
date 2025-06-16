@@ -197,6 +197,7 @@ const system = ref({
 }
 
 h1 {
+  color: red;
   font-size: 24px;
   margin-bottom: 16px;
 }
