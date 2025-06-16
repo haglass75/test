@@ -41,5 +41,15 @@
     "src/**/*.js": {
       "runtime": "nodejs18.x"
     }
+  },
+  "env": {
+    "VITE_I18N_LOCALE": "ko",
+    "VITE_I18N_FALLBACK_LOCALE": "ko"
+  },
+  "build": {
+    "env": {
+      "VITE_I18N_LOCALE": "ko",
+      "VITE_I18N_FALLBACK_LOCALE": "ko"
+    }
   }
 }

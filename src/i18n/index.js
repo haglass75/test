@@ -178,19 +178,38 @@ const messages = {
   },
 };
 
-// 초기 언어 설정
+// Vercel 환경에 최적화된 초기 언어 설정
 const getInitialLanguage = () => {
-  if (typeof window === "undefined") return "ko";
+  // SSR 환경에서는 기본값 반환
+  if (typeof window === "undefined") {
+    return "ko";
+  }
 
   try {
+    // 1. 환경 변수에서 확인
+    const envLocale = import.meta.env.VITE_I18N_LOCALE;
+    if (envLocale && SUPPORTED_LANGUAGES.includes(envLocale)) {
+      return envLocale;
+    }
+
+    // 2. localStorage에서 확인
     const saved = localStorage.getItem("language");
     if (saved && SUPPORTED_LANGUAGES.includes(saved)) {
       return saved;
     }
+
+    // 3. 브라우저 언어 확인
+    if (navigator && navigator.language) {
+      const browserLang = navigator.language.split("-")[0];
+      if (SUPPORTED_LANGUAGES.includes(browserLang)) {
+        return browserLang;
+      }
+    }
   } catch (error) {
-    console.warn("localStorage 접근 실패:", error);
+    console.warn("언어 설정 중 오류:", error);
   }
 
+  // 기본값
   return "ko";
 };
 
@@ -201,6 +220,10 @@ const i18n = createI18n({
   fallbackLocale: "ko",
   messages,
   globalInjection: true,
+  silentTranslationWarn: true,
+  silentFallbackWarn: true,
+  missingWarn: false,
+  fallbackWarn: false,
 });
 
 export default i18n;

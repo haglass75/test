@@ -25,6 +25,10 @@ export default defineConfig({
     __VUE_I18N_FULL_INSTALL__: true,
     __VUE_I18N_LEGACY_API__: false,
     __INTLIFY_PROD_DEVTOOLS__: false,
+    __VUE_I18N_LOCALE__: JSON.stringify(process.env.VITE_I18N_LOCALE || "ko"),
+    __VUE_I18N_FALLBACK_LOCALE__: JSON.stringify(
+      process.env.VITE_I18N_FALLBACK_LOCALE || "ko"
+    ),
   },
   server: {
     host: true,

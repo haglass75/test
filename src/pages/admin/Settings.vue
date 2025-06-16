@@ -100,7 +100,7 @@
 import { ref, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { SUPPORTED_LANGUAGES } from "../../i18n/index.js";
-import { changeLanguage } from "../../i18n/index.js";
+import { changeLanguage } from "../../i18n/changeLanguage.js";
 
 const { t, locale } = useI18n();
 console.log(t);
@@ -115,13 +115,8 @@ onMounted(() => {
 // 언어 변경 함수
 const setLanguage = (lang) => {
   if (SUPPORTED_LANGUAGES.includes(lang)) {
-    locale.value = lang;
+    changeLanguage(lang);
     selectedLang.value = lang;
-
-    // localStorage에 저장
-    if (typeof window !== "undefined") {
-      localStorage.setItem("language", lang);
-    }
   }
 };
 
